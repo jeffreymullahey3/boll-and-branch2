@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: ae_data_challenge
+    description: BigQuery dataset/schema provided by Boll and Branch. I copied the datasets from data-recruiting into my own database bb-dc-1 so that I could connect to dbt cloud.
+    database: bb-dc-1
+    schema: test
+    tables:
+      - name: orders1
+        description: Raw orders data.
+        columns:
+          - name: _id
+            description: Order ID. Not a primary key because it is not distinct. An order can have many items, which are listed as separate rows all with the same ID.
+            tests: 
+              - not_null 
+
+      - name: products1
+        description: Raw products data.
+        columns:
+          - name: _id
+            description: Order ID. Not a primary key because it is not distinct. A product can have many variants, which are listed as separate rows all with the same ID.
+            
+      - name: web_events1
+        description: Raw web events data.
+        columns:
+          - name: _id
+            description: Primary key for web events.
+            
+            
