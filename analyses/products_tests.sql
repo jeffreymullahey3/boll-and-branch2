@@ -7,3 +7,18 @@ row_number() over (partition by product_id, product_variant_id order by product_
 *
 from {{ ref('stg_products') }}
 where product_id = 199052853261  and product_variant_id = 2066821316621
+
+
+select *
+from {{ ref('stg_products') }}
+where product_id = 5505404673
+
+select *
+from {{ ref('stg_products') }}
+where product_id = 2289536335931 
+
+select *
+from {{ ref('stg_products') }}
+where product_id = 5020258238523
+
+

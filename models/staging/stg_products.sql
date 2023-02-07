@@ -1,4 +1,4 @@
-with products as (
+with unnested_data as (
 
     select 
         _id as product_id,
@@ -18,6 +18,39 @@ with products as (
         v.option2 as product_variant_option2
 
     from {{ source('ae_data_challenge', 'products1') }} as a, unnest(variants) as v
+
+    
+),
+
+remove_dups as (
+
+
+select *, 
+row_number() over (partition by product_id, product_variant_id order by product_updated_at_ts desc, product_variant_updated_at_ts) as row_num,
+
+from unnested_data
+
+),
+ 
+ products as (
+
+    select 
+        {{ dbt_utils.generate_surrogate_key(['product_id', 'product_variant_id' ]) }} as products_surrogate_primary_key,
+        
+        product_id,
+        product_category,
+        product_updated_at_ts,
+        product_title,
+        
+        product_variant_id,
+        product_variant_sku,
+        product_variant_title,
+        product_variant_updated_at_ts,
+        product_variant_option1,
+        product_variant_option2
+
+    from remove_dups
+    where row_num = 1
 )
 
 select * from products
