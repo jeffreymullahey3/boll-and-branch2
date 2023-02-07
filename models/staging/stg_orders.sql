@@ -39,9 +39,8 @@ select
         variant_id,
         price,
         quantity,
-        line_total_discount,
-
-        
+        line_total_discount
 
 from remove_dups
 where row_num = 1
+--order by order_id, product_id, variant_id 
