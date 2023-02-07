@@ -20,6 +20,7 @@ orders_with_products as (
         orders.price,
         orders.quantity,
         orders.line_total_discount,
+        orders.order_created_at_ts,
 
         products.product_id,
         products.product_category,
@@ -30,8 +31,8 @@ orders_with_products as (
         products.product_variant_sku,
         products.product_variant_title,
         
-        products.product_variant_option1,
-        products.product_variant_option2
+        products.product_variant_option1 as product_style,
+        products.product_variant_option2 as product_size
 
     from orders
     left join products

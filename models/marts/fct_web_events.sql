@@ -1,11 +1,8 @@
 with web_events as (
 
-    select *,
-
-    case when lower(web_event_name) = 'order_completed' then web_event_ts else null end as order_completed_web_event_ts,
-    case when is_new_session = 1 then event_url else ' ' end as landing_page_url
+    select *
     
-     from {{ ref('stg_web_events') }}
+     from {{ ref('int_web_events') }}
 ),
 
 products as (
