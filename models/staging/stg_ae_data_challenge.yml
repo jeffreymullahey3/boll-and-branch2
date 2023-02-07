@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: Orders data that only keeps the most recently updated order details to remove duplicate records. If an order has multiple items, each item has it's own record in the data, with a common order id, but unique product id
+    columns:
+      - name: order_id
+        description: Identifies an order
+        tests:
+          - not_null
+
+      - name: product_id
+        description: Identifies a product group
+        tests:
+          - not_null
+
+      - name: variant_id
+        description: Identifies the product variant (i.e. sub-type)
+        tests:
+          - not_null
+
+      - name: order_surrogate_primary_key
+        description: Primary key for orders
+        tests:
+          - not_null
+          - unique
+                 
+        
+  - name: stg_products
+    description: Products data that only keeps the most recent status per product and variant to remove duplicate records. Essentially a lookup table.
+    columns: 
+      - name: product_id
+        description: Identifies a product
+        tests:
+          - not_null
+
+      - name: product_variant_id
+        description: Identifies a product variant
+        tests:
+          - not_null
+
+      - name: products_surrogate_primary_key
+        description: Primary key for products
+        tests:
+          - not_null
+          - unique 
+          
+  - name: stg_web_events
+    description: Web events data
+    columns: 
+      - name: web_event_id
+        description: Represents a unique web event
+        tests:
+          - unique 
+          - not_null           
+
+  
