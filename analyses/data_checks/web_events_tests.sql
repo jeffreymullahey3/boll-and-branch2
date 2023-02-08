@@ -43,3 +43,9 @@ from {{ source('ae_data_challenge', 'web_events1') }}
 where cookie_id = 'd063b426-6f99-49cc-a38a-78e3bcd27ff5'
 order by timestamp
 
+
+select count(*) as c1,
+utm_campaign
+from {{ ref('stg_web_events') }}
+group by 2
+order by 1 desc

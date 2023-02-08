@@ -24,6 +24,7 @@ select *,
 row_number() over (partition by order_id, product_id order by order_updated_at_ts desc) as row_num,
 
 from unnested_data
+where product_id is not null and variant_id is not null
 )
 
 select 

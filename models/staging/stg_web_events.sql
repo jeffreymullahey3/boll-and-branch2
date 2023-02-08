@@ -44,12 +44,12 @@ web_events as (
         _loaded_at as web_event_loaded_at,
         cookie_id as cookie_id_raw,
         cookie_id_formatted,
-        customer_id,
+        case when customer_id = 'NaN' then null else customer_id end as customer_id,
         event_name as web_event_name,
         event_url,
         event_properties as web_event_properties,
 
-        case when lower(event_name) = 'order_completed' then RTRIM(SUBSTR(event_properties, 13), '}') else null end as order_id,
+        case when lower(event_name) = 'order_completed' then RTRIM(SUBSTR(event_properties, 14), '}"') else null end as order_id,
 
         safe_cast((case when lower(event_name) IN ('product_viewed', 'product_added') then RTRIM(SUBSTR(event_properties, 16), '"}') else '' end) AS INT64) as product_id,
 
