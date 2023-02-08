@@ -9,7 +9,9 @@ add_landing_ts as (
         
     from {{ ref('stg_web_events') }}
     where is_new_session = 1
-),
+)
+,
+
 
 add_landing_url1 as (
 
@@ -20,7 +22,9 @@ add_landing_url1 as (
         
     from {{ ref('stg_web_events') }}
     where event_url is not null
-),
+)
+
+,
 
 add_landing_url2 as (
 
@@ -30,7 +34,9 @@ add_landing_url2 as (
         
     from add_landing_url1
     where row_num = 1
-),
+)
+
+,
 
 
 add_landing_medium1 as (
@@ -97,6 +103,43 @@ add_landing_campaign2 as (
     where row_num = 1
 ),
 
+add_first_user0 as (
+
+    select cookie_id_formatted,
+        cookie_session_id,
+        customer_id,
+        row_number() over (partition by cookie_id_formatted, cookie_session_id order by web_event_ts) as row_num,
+        
+    from {{ ref('stg_web_events') }}
+    where customer_id is not null
+),
+
+add_first_user1 as (
+
+    select *
+        
+    from add_first_user0
+    where row_num = 1
+),
+
+add_first_user2 as (
+
+    select distinct cookie_id_formatted,
+        cookie_session_id,
+    
+    from {{ ref('stg_web_events') }}
+),
+
+add_first_user3 as (
+    select 
+        a.*,
+        coalesce(b.customer_id, a.cookie_id_formatted) as first_user_id
+    from add_first_user2 a
+    left join add_first_user1 b on a.cookie_id_formatted = b.cookie_id_formatted and
+        a.cookie_session_id = b.cookie_session_id
+
+),
+
 
 
 final as (
@@ -105,7 +148,8 @@ final as (
     c.event_url as landing_url,
     d.utm_medium as landing_utm_medium,
     e.utm_source as landing_utm_source,
-    f.utm_campaign as landing_utm_campaign
+    f.utm_campaign as landing_utm_campaign,
+    g.first_user_id
 
     from {{ ref('stg_web_events') }} a
 
@@ -123,6 +167,9 @@ final as (
 
     left join add_landing_campaign2 f on a.cookie_id_formatted = f.cookie_id_formatted and
         a.cookie_session_id = f.cookie_session_id
+
+    left join add_first_user3 g on a.cookie_id_formatted = g.cookie_id_formatted and
+        a.cookie_session_id = g.cookie_session_id
 
 )
 
